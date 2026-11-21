@@ -1,0 +1,28 @@
+{
+  "id": "tx-demo-routine",
+  "time": "2026-10-21T12:15:00-03:00",
+  "amount": 12990,
+  "channel": "web",
+  "initiation": "qr_static",
+  "payer": {
+    "id": "acc-0042",
+    "type": "PF",
+    "account_created": "2024-01-06T00:00:00-03:00",
+    "day_limit": 2000000,
+    "night_limit": 50000,
+    "device": {
+      "id": "dev-0042-b",
+      "trusted": true,
+      "first_seen": "2026-10-08T11:00:00-03:00"
+    },
+    "ip": "ip-0021"
+  },
+  "beneficiary": {
+    "id": "ben-0388",
+    "type": "PF",
+    "bank": "10000002",
+    "key_type": "phone",
+    "key_created": "2023-10-02T00:00:00-03:00",
+    "account_created": "2020-10-02T00:00:00-03:00"
+  }
+}

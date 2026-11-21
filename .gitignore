@@ -1,0 +1,19 @@
+# Binaries
+/bin/
+/riskd
+/riskctl
+/gen-history
+*.exe
+*.test
+
+# Test, coverage and profiling output
+*.out
+coverage.*
+*.prof
+**/testdata/fuzz/
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

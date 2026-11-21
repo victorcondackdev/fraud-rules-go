@@ -1,0 +1,28 @@
+{
+  "id": "tx-demo-ato",
+  "time": "2026-10-11T03:39:30-03:00",
+  "amount": 95000,
+  "channel": "app",
+  "initiation": "key",
+  "payer": {
+    "id": "acc-0001",
+    "type": "PF",
+    "account_created": "2025-04-14T00:00:00-03:00",
+    "day_limit": 500000,
+    "night_limit": 100000,
+    "device": {
+      "id": "dev-ato-04",
+      "trusted": false,
+      "first_seen": "2026-10-11T03:17:00-03:00"
+    },
+    "ip": "ip-ato-04"
+  },
+  "beneficiary": {
+    "id": "ben-0509",
+    "type": "PF",
+    "bank": "10000009",
+    "key_type": "evp",
+    "key_created": "2026-10-09T05:32:00-03:00",
+    "account_created": "2026-09-29T03:32:00-03:00"
+  }
+}

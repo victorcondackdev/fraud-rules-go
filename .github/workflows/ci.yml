@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (Go ${{ matrix.go }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.22", "stable"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "Files not formatted with gofmt:"; echo "$unformatted"; exit 1
+          fi
+      - name: go vet
+        run: go vet ./...
+      - name: go test
+        run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
+      - name: Coverage
+        run: |
+          go tool cover -func=coverage.out | tail -n 1
+          total=$(go tool cover -func=coverage.out | awk '/^total:/ {sub("%","",$3); print $3}')
+          awk -v t="$total" 'BEGIN { if (t < 88) { print "coverage " t "% is below 88%"; exit 1 } }'
+      - name: Build
+        run: go build -trimpath ./cmd/...
+      - name: Validate and backtest the default ruleset
+        run: |
+          go run ./cmd/riskctl validate rulesets/pix-default.json
+          go run ./cmd/riskctl backtest rulesets/pix-default.json testdata/history-sample.jsonl
+
+  fuzz:
+    name: fuzz smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Run every fuzz target for 10s
+        run: |
+          for pkg in $(go list ./...); do
+            dir=$(go list -f '{{.Dir}}' "$pkg")
+            for target in $(grep -ho '^func Fuzz[A-Za-z0-9_]*' "$dir"/*_test.go 2>/dev/null | sed 's/^func //'); do
+              echo "::group::$pkg $target"
+              go test -run='^$' -fuzz="^${target}\$" -fuzztime=10s -fuzzminimizetime=1s "$pkg"
+              echo "::endgroup::"
+            done
+          done
+
+  docker:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t riskd:ci .
